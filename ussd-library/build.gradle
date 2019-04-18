@@ -5,11 +5,11 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 ext {
     bintrayRepo = 'maven'
-    bintrayName = 'ussd-library'
+    bintrayName = 'ussd-libraryKt'
 
     publishedGroupId = 'com.romellfudi.ussdlibrary'
     libraryName = 'VoIpUSSD'
-    artifact = 'ussd-library'
+    artifact = 'ussd-libraryKt'
 
     libraryDescription = 'Android library To comunicate with ussd display'
 

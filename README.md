@@ -29,7 +29,7 @@ repositories {
     jcenter()
 }
 dependencies {
-    implementation 'com.romellfudi.ussdlibrary:ussd-library:{latestVersion}'
+    implementation 'com.romellfudi.ussdlibrary:ussd-libraryKt:{latestVersion}'
 }
 ```
 
@@ -131,7 +131,7 @@ ussdApi.callUSSDOverlayInvoke(phoneNumber, map!!, object : USSDController.Callba
 
 for dual sim support
 
-```java
+```kotlin
 ussdApi.callUSSDOverlayInvoke(phoneNumber, simSlot, map!!, object : USSDController.CallbackInvoke {
     ...
 }
