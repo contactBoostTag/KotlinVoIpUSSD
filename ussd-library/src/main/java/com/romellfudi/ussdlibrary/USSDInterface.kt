@@ -1,4 +1,4 @@
-package com.romellfudi.ussdlibrary;
+package com.romellfudi.ussdlibrary
 
 /**
  * Interface ussd handler
@@ -8,6 +8,6 @@ package com.romellfudi.ussdlibrary;
  * @version 1.1.c 0/4/18
  */
 
-public interface USSDInterface {
-    void sendData(String text);
+interface USSDInterface {
+    fun sendData(text: String)
 }

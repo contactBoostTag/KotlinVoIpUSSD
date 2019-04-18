@@ -47,7 +47,7 @@ public class USSDApiTest {
     Activity activity;
 
     @InjectMocks
-    USSDController ussdController = USSDController.getInstance(activity);
+    USSDController ussdController = USSDController.Companion.getInstance(activity);
 
     @InjectMocks
     USSDService ussdService = new USSDService();
@@ -80,7 +80,7 @@ public class USSDApiTest {
     public void verifyAccesibilityAccessTest() {
         when(activity.getApplicationInfo()).thenReturn(applicationInfo);
         applicationInfo.nonLocalizedLabel = getClass().getPackage().toString();
-        USSDController.verifyAccesibilityAccess(activity);
+        USSDController.Companion.verifyAccesibilityAccess(activity);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class USSDApiTest {
         map.put("KEY_ERROR", new HashSet<>(Arrays.asList("problema", "problem", "error", "null")));
         mockStatic(USSDController.class);
         mockStatic(Uri.class);
-        when(USSDController.verifyAccesibilityAccess(any(Activity.class))).thenReturn(true);
+        when(USSDController.Companion.verifyAccesibilityAccess(any(Activity.class))).thenReturn(true);
         when(Uri.decode(any(String.class))).thenReturn(string);
         when(Uri.parse(any(String.class))).thenReturn(uri);
         doAnswer(new Answer<Object>() {
@@ -127,7 +127,7 @@ public class USSDApiTest {
         mockStatic(USSDController.class);
         mockStatic(USSDService.class);
         mockStatic(Uri.class);
-        when(USSDController.verifyAccesibilityAccess(any(Activity.class))).thenReturn(true);
+        when(USSDController.Companion.verifyAccesibilityAccess(any(Activity.class))).thenReturn(true);
         when(Uri.decode(any(String.class))).thenReturn(string);
         when(Uri.parse(any(String.class))).thenReturn(uri);
         doAnswer(new Answer<Object>() {
@@ -143,7 +143,7 @@ public class USSDApiTest {
         String MESSAGE = "loading";
         texts.add(MESSAGE);
         when(accessibilityEvent.getText()).thenReturn(texts);
-        when(USSDService.notInputText(accessibilityEvent)).thenReturn(true);
+        when(USSDService.Companion.notInputText(accessibilityEvent)).thenReturn(true);
         ussdController.callUSSDInvoke("*1#", map, callbackInvoke);
         verify(callbackInvoke,times(1)).over(stringArgumentCaptor.capture());
         assertThat(stringArgumentCaptor.getValue(), is(equalTo(MESSAGE)));
@@ -158,7 +158,7 @@ public class USSDApiTest {
         mockStatic(USSDController.class);
         mockStatic(USSDService.class);
         mockStatic(Uri.class);
-        when(USSDController.verifyAccesibilityAccess(any(Activity.class))).thenReturn(true);
+        when(USSDController.Companion.verifyAccesibilityAccess(any(Activity.class))).thenReturn(true);
         when(Uri.decode(any(String.class))).thenReturn(string);
         when(Uri.parse(any(String.class))).thenReturn(uri);
         doAnswer(new Answer<Object>() {
@@ -205,7 +205,7 @@ public class USSDApiTest {
         MESSAGE = "Final Close dialog";
         texts.remove(0);
         texts.add(MESSAGE);
-        when(USSDService.notInputText(accessibilityEvent)).thenReturn(true);
+        when(USSDService.Companion.notInputText(accessibilityEvent)).thenReturn(true);
         ussdController.send("1",callbackMessage);
         verify(callbackInvoke,times(2)).over(stringArgumentCaptor.capture());
         assertThat(stringArgumentCaptor.getValue(), is(equalTo(MESSAGE)));
@@ -219,8 +219,8 @@ public class USSDApiTest {
         mockStatic(USSDController.class);
         mockStatic(USSDService.class);
         mockStatic(Uri.class);
-        when(USSDController.verifyAccesibilityAccess(any(Activity.class))).thenReturn(true);
-        when(USSDController.verifyOverLay(any(Activity.class))).thenReturn(true);
+        when(USSDController.Companion.verifyAccesibilityAccess(any(Activity.class))).thenReturn(true);
+        when(USSDController.Companion.verifyOverLay(any(Activity.class))).thenReturn(true);
         when(Uri.decode(any(String.class))).thenReturn(string);
         when(Uri.parse(any(String.class))).thenReturn(uri);
         doAnswer(new Answer<Object>() {
@@ -267,7 +267,7 @@ public class USSDApiTest {
         MESSAGE = "Final Close dialog";
         texts.remove(0);
         texts.add(MESSAGE);
-        when(USSDService.notInputText(accessibilityEvent)).thenReturn(true);
+        when(USSDService.Companion.notInputText(accessibilityEvent)).thenReturn(true);
         ussdController.send("1",callbackMessage);
         verify(callbackInvoke,times(2)).over(stringArgumentCaptor.capture());
         assertThat(stringArgumentCaptor.getValue(), is(equalTo(MESSAGE)));
