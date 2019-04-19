@@ -5,16 +5,16 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 ext {
     bintrayRepo = 'maven'
-    bintrayName = 'ussd-libraryKt'
+    bintrayName = 'kotlin-ussd-library'
 
     publishedGroupId = 'com.romellfudi.ussdlibrary'
     libraryName = 'VoIpUSSD'
-    artifact = 'ussd-libraryKt'
+    artifact = 'kotlin-ussd-library'
 
     libraryDescription = 'Android library To comunicate with ussd display'
 
-    siteUrl = 'https://romellfudi.github.io/VoIpUSSDSample'
-    gitUrl = 'https://romellfudi.github.io/VoIpUSSDSample.git'
+    siteUrl = 'https://romellfudi.github.io/KotlinVoIpUSSD'
+    gitUrl = 'https://romellfudi.github.io/KotlinVoIpUSSD.git'
 
     libraryVersion = '1.1.i'
 
