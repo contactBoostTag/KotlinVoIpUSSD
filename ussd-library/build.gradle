@@ -14,7 +14,7 @@ ext {
     libraryDescription = 'Android library To comunicate with ussd display'
 
     siteUrl = 'https://romellfudi.github.io/KotlinVoIpUSSD'
-    gitUrl = 'https://romellfudi.github.io/KotlinVoIpUSSD.git'
+    gitUrl = 'https://github.com/romellfudi/KotlinVoIpUSSD.git'
 
     libraryVersion = '1.1.i'
 
