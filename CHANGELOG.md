@@ -2,6 +2,15 @@
 
 ## Release Kotlin USSD Library 1.1.i (19/04/2019)
 - Kotlin support (kotlin-ussd-librrary)
+
+latestVersion is 1.1.i
+
+repositories {
+    jcenter()
+}
+dependencies {
+    implementation 'com.romellfudi.ussdlibrary:kotlin-ussd-library:{latestVersion}'
+}
 ---
 
 ## Release USSD Library 1.1.i Interface for usage (06/03/2019)
