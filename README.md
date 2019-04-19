@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/romellfudi/KotlinVoIpUSSD/blob/master/LICENSE)
 [![Bintray](https://img.shields.io/bintray/v/romllz489/maven/kotlin-ussd-library.svg)](https://bintray.com/romllz489/maven/kotlin-ussd-library)
 [![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-Void%20USSD%20Library-green.svg?style=flat )]( https://android-arsenal.com/details/1/7151 )
-[![Jitpack](https://jitpack.io/v/romellfudi/KotlinVoIpUSSD.svg)](https://jitpack.io/#romellfudi/VoIpUSSD)
+[![Jitpack](https://jitpack.io/v/romellfudi/KotlinVoIpUSSD.svg)](https://jitpack.io/#romellfudi/KotlinVoIpUSSD)
 [![CircleCi](https://img.shields.io/circleci/project/github/romellfudi/KotlinVoIpUSSD.svg)](https://circleci.com/gh/romellfudi/KotlinVoIpUSSD/tree/master)
 [![](https://img.shields.io/badge/language-ES-blue.svg)](./README.es)
 
