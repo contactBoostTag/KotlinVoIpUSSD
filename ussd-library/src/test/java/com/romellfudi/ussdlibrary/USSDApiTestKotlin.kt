@@ -5,8 +5,8 @@ import android.content.pm.ApplicationInfo
 import android.net.Uri
 import android.view.accessibility.AccessibilityEvent
 import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import io.mockk.*
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -14,7 +14,9 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
+import org.junit.FixMethodOrder
 import org.junit.Test
+import org.junit.runners.MethodSorters
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.powermock.core.classloader.annotations.PrepareForTest
@@ -26,6 +28,7 @@ import java.util.*
  * @date 18/4/19
  */
 @PrepareForTest(Uri::class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class USSDApiTestKotlin {
 
     @Mock
@@ -57,13 +60,42 @@ class USSDApiTestKotlin {
     @Mock
     internal val ussdInterface: USSDInterface = mock()
 
+    companion object {
+        var i = -1
+        var j = 0
+        var MESSAGE = listOf(listOf("waiting", "problem UUID"),
+                listOf("loading"),
+                listOf("waiting", "message", "message", "message", "message", "Final Close dialog"))
+    }
+
     @Before
     fun setUp() {
         MockKAnnotations.init(this, relaxUnitFun = true)
+        val texts = object : ArrayList<CharSequence>() {}
+        i = -1
+        whenever(activity.startActivity(any()))
+                .thenAnswer {
+                    load(texts)
+                }
+        whenever(ussdInterface.sendData(any()))
+                .thenAnswer {
+                    load(texts)
+                }
+
+    }
+
+    private fun load(texts: ArrayList<CharSequence>) {
+        i++
+        if (texts.isNotEmpty())
+            texts.removeAt(0)
+        texts.add(MESSAGE[j][i])
+        every { accessibilityEvent.text } returns texts
+        ussdService.onAccessibilityEvent(accessibilityEvent)
     }
 
     @Test
     fun verifyAccesibilityAccessTest() {
+        j = -1
         `when`(activity.applicationInfo).thenReturn(applicationInfo)
         `when`(activity.getSystemService(any())).thenReturn(null)
         applicationInfo!!.nonLocalizedLabel = javaClass.getPackage()!!.toString()
@@ -72,37 +104,15 @@ class USSDApiTestKotlin {
 
     @Test
     fun callUSSDInvokeTest() {
-        `when`(activity.applicationInfo).thenReturn(applicationInfo)
-        `when`(activity.getSystemService(any())).thenReturn(null)
-        val map = HashMap<String, HashSet<String>>()
-        map["KEY_LOGIN"] = HashSet(Arrays.asList("espere", "waiting", "loading", "esperando"))
-        map["KEY_ERROR"] = HashSet(Arrays.asList("problema", "problem", "error", "null"))
-        mockkObject(USSDController)
-        mockkObject(USSDController.Companion)
-        mockkStatic(Uri::class)
-        every { USSDController.verifyAccesibilityAccess(any()) } returns true
-        every { Uri.decode(any()) } returns ""
-        every { Uri.parse(any()) } returns uri
-        doAnswer {
-            ussdService.onAccessibilityEvent(accessibilityEvent!!)
-            null
-        }.`when`(activity).startActivity(any())
-
-        every { accessibilityEvent.className } returns "amigo.app.AmigoAlertDialog"
-        val texts = object : ArrayList<CharSequence>() {}
+        j = 0
+        val map = prepareTest()
         var MESSAGE = "waiting"
-        texts.add(MESSAGE)
-
-        every { accessibilityEvent.text } returns texts
         every { accessibilityEvent.source } returns null
         ussdController.callUSSDInvoke("*1#", map, callbackInvoke!!)
         verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
         assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE)))
 
         MESSAGE = "problem UUID"
-        texts.removeAt(0)
-        texts.add(MESSAGE)
-        every { accessibilityEvent.text } returns texts
         ussdController.callUSSDInvoke("*1#", map, callbackInvoke!!)
         verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
         assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE)))
@@ -110,171 +120,89 @@ class USSDApiTestKotlin {
 
     @Test
     fun callUSSDLoginWithNotInputText() {
-        `when`(activity.applicationInfo).thenReturn(applicationInfo)
-        `when`(activity.getSystemService(any())).thenReturn(null)
-        val map = HashMap<String, HashSet<String>>()
-        map["KEY_LOGIN"] = HashSet(Arrays.asList("espere", "waiting", "loading", "esperando"))
-        map["KEY_ERROR"] = HashSet(Arrays.asList("problema", "problem", "error", "null"))
-        mockkObject(USSDController)
-        mockkObject(USSDController.Companion)
-        mockkObject(USSDService)
-        mockkObject(USSDService.Companion)
-        mockkStatic(Uri::class)
-        every { USSDController.verifyAccesibilityAccess(any()) } returns true
-        every { Uri.decode(any()) } returns ""
-        every { Uri.parse(any()) } returns uri
-        doAnswer {
-            ussdService.onAccessibilityEvent(accessibilityEvent!!)
-            null
-        }.`when`(activity).startActivity(any())
-
-        every { accessibilityEvent.className } returns "amigo.app.AmigoAlertDialog"
-        val texts = object : ArrayList<CharSequence>() {}
+        j = 1
+        val map = prepareTest()
         var MESSAGE = "loading"
-        texts.add(MESSAGE)
-        every { accessibilityEvent.text } returns texts
 
         every { USSDService.notInputText(any()) } returns true
         every { accessibilityEvent.source } returns null
-        ussdController.callUSSDInvoke("*1#", map, callbackInvoke!!)
+        ussdController.callUSSDInvoke("*1#", map, callbackInvoke)
         verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
         assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE)))
     }
 
     @Test
     fun callUSSDSendMultipleMessages() {
-        val map = HashMap<String, HashSet<String>>()
-        map["KEY_LOGIN"] = HashSet(Arrays.asList("espere", "waiting", "loading", "esperando"))
-        map["KEY_ERROR"] = HashSet(Arrays.asList("problema", "problem", "error", "null"))
-        mockkObject(USSDController)
-        mockkObject(USSDController.Companion)
-        mockkObject(USSDService)
-        mockkObject(USSDService.Companion)
-        mockkStatic(Uri::class)
-
-        every { USSDController.verifyAccesibilityAccess(any()) } returns true
-        every { Uri.decode(any()) } returns ""
-        every { Uri.parse(any()) } returns uri
-        doAnswer {
-            ussdService.onAccessibilityEvent(accessibilityEvent!!)
-            null
-        }.`when`(activity).startActivity(any())
-
-        every { accessibilityEvent.className } returns "amigo.app.AmigoAlertDialog"
-        val texts = object : ArrayList<CharSequence>() {}
+        j = 2
+        val map = prepareTest()
 
         var MESSAGE = "waiting"
-        texts.add(MESSAGE)
-        every { accessibilityEvent.text } returns texts
         every { accessibilityEvent.source } returns null
         ussdController.callUSSDInvoke("*1#", map, callbackInvoke!!)
+        multipleMessages(MESSAGE, map)
+    }
+
+    private fun multipleMessages(MESSAGE: String, map: HashMap<String, HashSet<String>>) {
+        var MESSAGE1 = MESSAGE
         verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE)))
+        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE1)))
 
-        doAnswer {
-            ussdService.onAccessibilityEvent(accessibilityEvent!!)
-            null
-        }.`when`(ussdInterface).sendData(any())
-
-        MESSAGE = "Return a message from GATEWAY USSD"
-        texts.removeAt(0)
-        texts.add(MESSAGE)
-        every { accessibilityEvent.text } returns texts
+        MESSAGE1 = "message"
         every { accessibilityEvent.source } returns null
         ussdController.ussdInterface = ussdInterface
 
         ussdController.send("1", callbackMessage!!)
         verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE)))
+        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE1)))
 
         ussdController.send("1", callbackMessage!!)
         verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE)))
+        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE1)))
 
         ussdController.send("1", callbackMessage!!)
         verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE)))
+        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE1)))
 
         ussdController.send("1", callbackMessage!!)
         verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE)))
+        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE1)))
 
-        MESSAGE = "Final Close dialog"
-        texts.removeAt(0)
-        texts.add(MESSAGE)
+        MESSAGE1 = "Final Close dialog"
         every { USSDService.notInputText(any()) } returns true
         ussdController.callUSSDInvoke("*1#", map, callbackInvoke!!)
         verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE)))
+        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE1)))
     }
 
     @Test
     fun callUSSDOverlayInvokeMultipleMessages() {
+        j = 2
+        val map = prepareTest()
+        var MESSAGE = "waiting"
+        every { accessibilityEvent.source } returns null
+        ussdController.ussdInterface = ussdInterface
+
+        ussdController.callUSSDOverlayInvoke("*1#", map, callbackInvoke!!)
+        multipleMessages(MESSAGE, map)
+    }
+
+    private fun prepareTest(): HashMap<String, HashSet<String>> {
         val map = HashMap<String, HashSet<String>>()
         map["KEY_LOGIN"] = HashSet(Arrays.asList("espere", "waiting", "loading", "esperando"))
         map["KEY_ERROR"] = HashSet(Arrays.asList("problema", "problem", "error", "null"))
         mockkObject(USSDController)
-        mockkObject(USSDController.Companion)
+        mockkObject(USSDController)
         mockkObject(USSDService)
-        mockkObject(USSDService.Companion)
+        mockkObject(USSDService)
         mockkStatic(Uri::class)
 
         every { USSDController.verifyAccesibilityAccess(any()) } returns true
         every { USSDController.verifyOverLay(any()) } returns true
         every { Uri.decode(any()) } returns ""
         every { Uri.parse(any()) } returns uri
-        doAnswer {
-            ussdService.onAccessibilityEvent(accessibilityEvent!!)
-            null
-        }.`when`(activity).startActivity(any())
 
         every { accessibilityEvent.className } returns "amigo.app.AmigoAlertDialog"
-        val texts = object : ArrayList<CharSequence>() {}
-        var MESSAGE = "waiting"
-        texts.add(MESSAGE)
-        every { accessibilityEvent.text } returns texts
-        every { accessibilityEvent.source } returns null
-        ussdController.ussdInterface = ussdInterface
-
-        ussdController.callUSSDOverlayInvoke("*1#", map, callbackInvoke!!)
-        verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE)))
-
-        doAnswer {
-            ussdService.onAccessibilityEvent(accessibilityEvent!!)
-            null
-        }.`when`(ussdInterface).sendData(any())
-
-        MESSAGE = "Return a message from GATEWAY USSD"
-        texts.removeAt(0)
-        texts.add(MESSAGE)
-        every { accessibilityEvent.text } returns texts
-        every { accessibilityEvent.source } returns null
-        ussdController.ussdInterface = ussdInterface
-
-        ussdController.send("1", callbackMessage!!)
-        verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE)))
-
-        ussdController.send("1", callbackMessage!!)
-        verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE)))
-
-        ussdController.send("1", callbackMessage!!)
-        verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE)))
-
-        ussdController.send("1", callbackMessage!!)
-        verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE)))
-
-        MESSAGE = "Final Close dialog"
-        texts.removeAt(0)
-        texts.add(MESSAGE)
-        every { USSDService.notInputText(any()) } returns true
-        ussdController.callUSSDInvoke("*1#", map, callbackInvoke!!)
-        verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE)))
+        return map
     }
 
 }
