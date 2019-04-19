@@ -1,4 +1,4 @@
-# Handler USSD API
+# Kotlin Handler USSD API
 
 [![Platform](https://img.shields.io/badge/platform-android-brightgreen.svg)](https://developer.android.com/index.html)
 [![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=23)
@@ -12,7 +12,7 @@
 ### by Romell Dominguez
 [![](https://raw.githubusercontent.com/romellfudi/assets/master/favicon.ico)](https://www.romellfudi.com/)
 
-## Target Development [High Quality](https://raw.githubusercontent.com/romellfudi/VoIpUSSD/Rev04/snapshot/device_recored.gif):
+## Target Development [High Quality](https://raw.githubusercontent.com/romellfudi/KotlinVoIpUSSD/Rev04/snapshot/device_recored.gif):
 
 ![](snapshot/device_recored.gif#gif)
 
@@ -20,7 +20,7 @@ Interactive with ussd windoows, It is necessary to have present that the interfa
 
 ## USSD KOTLIN LIBRARY 
 
-`latestVersion` is ![](https://img.shields.io/bintray/v/romllz489/maven/kotlin-ussd-library.svg)
+`latestVersion` is [![Bintray](https://img.shields.io/bintray/v/romllz489/maven/kotlin-ussd-library.svg)](https://bintray.com/romllz489/maven/kotlin-ussd-library)
 
 Add the following in your app's `build.gradle` file:
 
@@ -33,7 +33,7 @@ dependencies {
 }
 ```
 
-* Writing xml config file from [here](https://github.com/romellfudi/VoIpUSSD/blob/master/ussd-library/src/main/res/xml/ussd_service.xml) to res/xml folder (if necessary), this config file allow link between App and SO:
+* Writing xml config file from [here](https://github.com/romellfudi/KotlinVoIpUSSD/blob/master/ussd-library/src/main/res/xml/ussd_service.xml) to res/xml folder (if necessary), this config file allow link between App and SO:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
