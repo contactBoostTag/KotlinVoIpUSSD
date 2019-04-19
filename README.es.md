@@ -29,7 +29,7 @@ repositories {
     jcenter()
 }
 dependencies {
-    compile 'com.romellfudi.ussdlibrary:ussd-library:{latestVersion}'
+    implementation 'com.romellfudi.ussdlibrary:kotlin-ussd-library:{latestVersion}'
 }
 ```
 
@@ -75,82 +75,74 @@ Primero necesitamos mapear los mensajes de respuesta USSD, para idetificar los d
 | KEY_LOGIN | "espere","waiting","loading","esperando",... |
 | KEY_ERROR | "problema","problem","error","null",... |
 
-```java
-map = new HashMap<>();
-map.put("KEY_LOGIN",new HashSet<>(Arrays.asList("espere", "waiting", "loading", "esperando")));
-map.put("KEY_ERROR",new HashSet<>(Arrays.asList("problema", "problem", "error", "null")));
+```kotlin
+map = HashMap()
+map!!["KEY_LOGIN"] = HashSet(Arrays.asList("espere", "waiting", "loading", "esperando"))
+map!!["KEY_ERROR"] = HashSet(Arrays.asList("problema", "problem", "error", "null"))
 ```
 
 Instancia un objeto ussController con su activity
 
-```java
-USSDApi ussdApi = USSDController.getInstance(activity);
-ussdApi.callUSSDInvoke(phoneNumber, map, new USSDController.CallbackInvoke() {
-    @Override
-    public void responseInvoke(String message) {
+```kotlin
+USSDApi ussdApi = USSDController.getInstance(activity!!)
+ussdApi.callUSSDOverlayInvoke(phoneNumber, map!!, object : USSDController.CallbackInvoke {
+    override fun responseInvoke(message: String) {
         // message has the response string data
         String dataToSend = "data"// <- send "data" into USSD's input text
-        ussdApi.send(dataToSend,new USSDController.CallbackMessage(){
-            @Override
-            public void responseMessage(String message) {
+        ussdApi!!.send("1", object : USSDController.CallbackMessage {
+            override fun responseMessage(message: String) {
                 // message has the response string data from USSD
             }
-        });
+        })
     }
 
-    @Override
-    public void over(String message) {
-        // message has the response string data from USSD
+    override fun over(message: String) {
+        // message has the response string data from USSD or error
         // response no have input text, NOT SEND ANY DATA
     }
-});
-
+})
 ```
 
 Si requiere un flujo de trabajo, tienes que usar la siguiente estructura:
 
-```java
-ussdApi.callUSSDInvoke(phoneNumber, map, new USSDController.CallbackInvoke() {
-    @Override
-    public void responseInvoke(String message) {
+```kotlin
+ussdApi.callUSSDOverlayInvoke(phoneNumber, map!!, object : USSDController.CallbackInvoke {
+    override fun responseInvoke(message: String) {
         // first option list - select option 1
-        ussdApi.send("1",new USSDController.CallbackMessage(){
-            @Override
-            public void responseMessage(String message) {
+        ussdApi!!.send("1", object : USSDController.CallbackMessage {
+            override fun responseMessage(message: String) {
                 // second option list - select option 1
                 ussdApi.send("1",new USSDController.CallbackMessage(){
-                    @Override
-                    public void responseMessage(String message) {
+                    override fun responseMessage(message: String) {
                         ...
                     }
-                });
+                })
             }
-        });
+        })
     }
 
-    @Override
-    public void over(String message) {
+    override fun over(message: String) {
         // message has the response string data from USSD
         // response no have input text, NOT SEND ANY DATA
     }
     ...
-});
+})
 ```
 
 ## Static Methods
 En caso de uso android >= M, necesitaras verificar los permisos, igualmente los métodos `callUSSDInvoke` y `callUSSDOverlayInvoke` también verifican que esten habilitados;
 
-```java
- # check if accessibility permissions is enable
+```kotlin
+ // check if accessibility permissions is enable
     USSDController.verifyAccesibilityAccess(Activity)
- # check if overlay permissions is enable
+ // check if overlay permissions is enable
     USSDController.verifyOverLay(Activity)
 ```
 
 Soporte multi-sim card:
 
-```java
-ussdApi.callUSSDInvoke(phoneNumber, simSlot, map, new USSDController.CallbackInvoke() {
+```kotlin
+ussdApi.callUSSDOverlayInvoke(phoneNumber, simSlot, map!!, object : USSDController.CallbackInvoke {
     ...
 }
 ```
@@ -178,14 +170,14 @@ Agregar Broadcast Service:
 
 Invocar como cualquier servicio:
 
-```java
-Intent svc = new Intent(activity, SplashLoadingService.class);
+```kotlin
+val svc = Intent(activity, OverlayShowingService::class.java)
 // show layout
-getActivity().startService(svc);
-ussdApi.callUSSDOverlayInvoke(phoneNumber, simSlot, map, new USSDController.CallbackInvoke() {
+activity.startService(svc)
+ussdApi.callUSSDOverlayInvoke(phoneNumber, map!!, object : USSDController.CallbackInvoke {
         ...
         // dismiss layout
-        getActivity().stopService(svc);
+        activity.stopService(svc)
         ...
 }
 ```
@@ -196,10 +188,10 @@ ussdApi.callUSSDOverlayInvoke(phoneNumber, simSlot, map, new USSDController.Call
 
 En esta sección dejo las líneas requeridas para realizar la conexión VOIP-USSD
 
-```java
-ussdPhoneNumber = ussdPhoneNumber.replace("#", uri);
-Uri uriPhone = Uri.parse("tel:" + ussdPhoneNumber);
-context.startActivity(new Intent(Intent.ACTION_CALL, uriPhone));
+```kotlin
+ussdPhoneNumber = ussdPhoneNumber.replace("#", uri)
+val uriPhone = Uri.parse("tel:$ussdPhoneNumber")
+context.startActivity(Intent(Intent.ACTION_CALL, uri))
 ```
 
 Una vez inicializado la llamada el servidor telcom comenzará a enviar las *famosas pantallas **ussd***
@@ -208,7 +200,7 @@ Una vez inicializado la llamada el servidor telcom comenzará a enviar las *famo
 
 ### License
 ```
-Copyright 2018 Romell D.Z.
+Copyright 2019 Romell D.Z.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

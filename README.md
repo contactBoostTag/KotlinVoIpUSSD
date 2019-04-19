@@ -29,7 +29,7 @@ repositories {
     jcenter()
 }
 dependencies {
-    implementation 'com.romellfudi.ussdlibrary:ussd-libraryKt:{latestVersion}'
+    implementation 'com.romellfudi.ussdlibrary:kotlin-ussd-library:{latestVersion}'
 }
 ```
 
@@ -129,14 +129,6 @@ ussdApi.callUSSDOverlayInvoke(phoneNumber, map!!, object : USSDController.Callba
 })
 ```
 
-for dual sim support
-
-```kotlin
-ussdApi.callUSSDOverlayInvoke(phoneNumber, simSlot, map!!, object : USSDController.CallbackInvoke {
-    ...
-}
-```
-
 ## Static Methods
 In case use at android >= M, you could check previusly permissions, `callInvoke` and `callUSSDOverlayInvoke` methods check eneble too:
 
@@ -145,6 +137,14 @@ In case use at android >= M, you could check previusly permissions, `callInvoke`
     USSDController.verifyAccesibilityAccess(Activity)
  // check if overlay permissions is enable
     USSDController.verifyOverLay(Activity)
+```
+
+for dual sim support
+
+```kotlin
+ussdApi.callUSSDOverlayInvoke(phoneNumber, simSlot, map!!, object : USSDController.CallbackInvoke {
+    ...
+}
 ```
 
 ## Overlay Service Widget (not required)
@@ -200,7 +200,7 @@ Once initialized the call will begin to receive and send the **famous USSD windo
 
 ### License
 ```
-Copyright 2018 Romell D.Z.
+Copyright 2019 Romell D.Z.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
