@@ -18,7 +18,7 @@
 
 Interactive with ussd windoows, It is necessary to have present that the interface depends on the SO and on the manufacturer of Android device.
 
-## USSD LIBRARY (DON'T WORK IN KOTLIN)
+## USSD KOTLIN LIBRARY 
 
 `latestVersion` is ![](https://img.shields.io/bintray/v/romllz489/maven/kotlin-ussd-library.svg)
 
