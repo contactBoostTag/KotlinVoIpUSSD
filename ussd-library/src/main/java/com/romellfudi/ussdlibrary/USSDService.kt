@@ -8,8 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
-
-import java.util.ArrayList
+import java.util.*
 
 /**
  * AccessibilityService for ussd windows on Android mobile Telcom
@@ -30,9 +29,9 @@ class USSDService : AccessibilityService() {
         this.event = event
 
         Log.d(TAG, "onAccessibilityEvent")
-        Log.d(TAG, "onAccessibilityEvent: [type] ${event.eventType} [class] ${event.className}" +
-                        " [package] ${event.packageName} [time]" +
-                        " ${event.eventTime} [text] ${event.text}")
+//        Log.d(TAG, "onAccessibilityEvent: [type] ${event.eventType} [class] ${event.className}" +
+//                " [package] ${event.packageName} [time]" +
+//                " ${event.eventTime} [text] ${event.text}")
 
         if (USSDController.instance == null || !USSDController.instance!!.isRunning!!) {
             return
@@ -41,11 +40,11 @@ class USSDService : AccessibilityService() {
         if (LoginView(event) && notInputText(event)) {
             // first view or logView, do nothing, pass / FIRST MESSAGE
             clickOnButton(event, 0)
-            USSDController.instance!!.isRunning = false
             USSDController.instance!!.callbackInvoke.over(event.text[0].toString())
-        } else if (problemView(event) || LoginView(event)) {
+        } else if (problemView(event) ) {
             // deal down
             clickOnButton(event, 1)
+            USSDController.instance!!.isRunning = false
             USSDController.instance!!.callbackInvoke.over(event.text[0].toString())
         } else if (isUSSDWidget(event)) {
             // ready for work

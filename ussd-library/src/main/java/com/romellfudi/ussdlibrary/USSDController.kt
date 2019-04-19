@@ -29,10 +29,10 @@ class USSDController private constructor(var context: Context) : USSDInterface, 
 
     var isRunning: Boolean? = false
 
-    private val ussdInterface: USSDInterface
+    var ussdInterface: USSDInterface? = null
 
     init {
-        ussdInterface = this
+            ussdInterface = this
     }
 
     /**
@@ -136,8 +136,9 @@ class USSDController private constructor(var context: Context) : USSDInterface, 
         for (s in simSlotName)
             intent.putExtra(s, simSlot)
 
-        val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
+        val telecomManager = context.getSystemService(Context.TELECOM_SERVICE)
         if (telecomManager != null) {
+            val telecomManager = telecomManager as TelecomManager
             val phoneAccountHandleList = telecomManager.callCapablePhoneAccounts
             if (phoneAccountHandleList != null && phoneAccountHandleList.size > simSlot)
                 intent.putExtra("android.telecom.extra.PHONE_ACCOUNT_HANDLE", phoneAccountHandleList[simSlot])
@@ -152,7 +153,7 @@ class USSDController private constructor(var context: Context) : USSDInterface, 
 
     override fun send(text: String, callbackMessage: CallbackMessage) {
         this.callbackMessage = callbackMessage
-        ussdInterface.sendData(text)
+        ussdInterface?.sendData(text)
     }
 
     interface CallbackInvoke {
@@ -182,7 +183,7 @@ class USSDController private constructor(var context: Context) : USSDInterface, 
         fun getInstance(context: Context): USSDController {
             if (instance == null)
                 instance = USSDController(context)
-            return instance as  USSDController
+            return instance as USSDController
         }
 
         fun verifyAccesibilityAccess(context: Context): Boolean {
@@ -255,9 +256,9 @@ class USSDController private constructor(var context: Context) : USSDInterface, 
 
 
         protected fun isAccessiblityServicesEnable(context: Context): Boolean {
-            val am = context
-                    .getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+            val am = context.getSystemService(Context.ACCESSIBILITY_SERVICE)
             if (am != null) {
+                val am = am as AccessibilityManager
                 for (service in am.installedAccessibilityServiceList) {
                     if (service.id.contains(context.packageName)) {
                         return isAccessibilitySettingsOn(context, service.id)
