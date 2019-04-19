@@ -25,7 +25,7 @@ class USSDController private constructor(var context: Context) : USSDInterface, 
 
     lateinit var callbackInvoke: CallbackInvoke
 
-    lateinit var callbackMessage: CallbackMessage
+    lateinit var callbackMessage: (String) -> Unit
 
     var isRunning: Boolean? = false
 
@@ -151,7 +151,7 @@ class USSDController private constructor(var context: Context) : USSDInterface, 
         USSDService.send(text)
     }
 
-    override fun send(text: String, callbackMessage: CallbackMessage) {
+    override fun send(text: String, callbackMessage: (String) -> Unit) {
         this.callbackMessage = callbackMessage
         ussdInterface?.sendData(text)
     }
@@ -162,6 +162,7 @@ class USSDController private constructor(var context: Context) : USSDInterface, 
         fun over(message: String)
     }
 
+    // Unit Kotlin instead of Interface with just one message
     interface CallbackMessage {
         fun responseMessage(message: String)
     }

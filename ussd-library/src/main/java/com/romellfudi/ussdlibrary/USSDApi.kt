@@ -10,7 +10,7 @@ import java.util.HashSet
  * @since 1.0.a
  */
 interface USSDApi {
-    fun send(text: String, callbackMessage: USSDController.CallbackMessage)
+    fun send(text: String, callbackMessage: (String) -> Unit)
     fun callUSSDInvoke(ussdPhoneNumber: String, map: HashMap<String, HashSet<String>>,
                        callbackInvoke: USSDController.CallbackInvoke)
 

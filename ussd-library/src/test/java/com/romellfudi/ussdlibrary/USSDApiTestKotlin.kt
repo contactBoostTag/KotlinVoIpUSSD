@@ -47,7 +47,7 @@ class USSDApiTestKotlin {
     lateinit var callbackInvoke: USSDController.CallbackInvoke
 
     @MockK
-    lateinit var callbackMessage: USSDController.CallbackMessage
+    lateinit var callbackMessage: (String) -> Unit
 
     @MockK
     lateinit var uri: Uri
@@ -81,7 +81,13 @@ class USSDApiTestKotlin {
                 .thenAnswer {
                     load(texts)
                 }
+        eventDummy()
+    }
 
+    private fun eventDummy() {
+        every { accessibilityEvent.eventType } returns 0
+        every { accessibilityEvent.packageName } returns "ussd.test"
+        every { accessibilityEvent.eventTime } returns 1L
     }
 
     private fun load(texts: ArrayList<CharSequence>) {

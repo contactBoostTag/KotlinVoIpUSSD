@@ -38,11 +38,10 @@ class OverlayShowingService : Service() {
         wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val size = Point()
         wm!!.defaultDisplay.getSize(size)
-        val LAYOUT_FLAG: Int
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        val LAYOUT_FLAG: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {
-            LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_PHONE
+            WindowManager.LayoutParams.TYPE_PHONE
         }
         overlayedButton = Button(this)
         overlayedButton!!.text = tittle
@@ -57,7 +56,7 @@ class OverlayShowingService : Service() {
 
         params.gravity = Gravity.CENTER or Gravity.CENTER
         wm!!.addView(overlayedButton, params)
-        return Service.START_STICKY
+        return START_STICKY
     }
 
     override fun onCreate() {

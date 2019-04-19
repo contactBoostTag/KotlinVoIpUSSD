@@ -37,11 +37,10 @@ class SplashLoadingService : Service() {
         wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val size = Point()
         wm!!.defaultDisplay.getSize(size)
-        val LAYOUT_FLAG: Int
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        val LAYOUT_FLAG: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {
-            LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_PHONE
+            WindowManager.LayoutParams.TYPE_PHONE
         }
 
         val padding_in_dp = 100

@@ -4,7 +4,7 @@
 [![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=23)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/romellfudi/KotlinVoIpUSSD/blob/master/LICENSE)
 [![Bintray](https://img.shields.io/bintray/v/romllz489/maven/kotlin-ussd-library.svg)](https://bintray.com/romllz489/maven/kotlin-ussd-library)
-[![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-Void%20USSD%20Library-green.svg?style=flat )]( https://android-arsenal.com/details/1/7151 )
+[![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-Kotlin%20Void%20USSD%20Library-green.svg?style=flat )]( https://android-arsenal.com/details/1/7151 )
 [![Jitpack](https://jitpack.io/v/romellfudi/KotlinVoIpUSSD.svg)](https://jitpack.io/#romellfudi/KotlinVoIpUSSD)
 [![CircleCi](https://img.shields.io/circleci/project/github/romellfudi/KotlinVoIpUSSD.svg)](https://circleci.com/gh/romellfudi/KotlinVoIpUSSD/tree/master)
 [![](https://img.shields.io/badge/language-EN-blue.svg)](./)
@@ -84,17 +84,14 @@ map!!["KEY_ERROR"] = HashSet(Arrays.asList("problema", "problem", "error", "null
 Instancia un objeto ussController con su activity
 
 ```kotlin
-USSDApi ussdApi = USSDController.getInstance(activity!!)
 ussdApi.callUSSDOverlayInvoke(phoneNumber, map!!, object : USSDController.CallbackInvoke {
     override fun responseInvoke(message: String) {
         // message has the response string data
-        String dataToSend = "data"// <- send "data" into USSD's input text
-        ussdApi!!.send("1", object : USSDController.CallbackMessage {
-            override fun responseMessage(message: String) {
+        var dataToSend = "data"// <- send "data" into USSD's input text
+        ussdApi!!.send("1") { // it: response String
                 // message has the response string data from USSD
-            }
-        })
-    }
+        }
+     }
 
     override fun over(message: String) {
         // message has the response string data from USSD or error
@@ -109,16 +106,12 @@ Si requiere un flujo de trabajo, tienes que usar la siguiente estructura:
 ussdApi.callUSSDOverlayInvoke(phoneNumber, map!!, object : USSDController.CallbackInvoke {
     override fun responseInvoke(message: String) {
         // first option list - select option 1
-        ussdApi!!.send("1", object : USSDController.CallbackMessage {
-            override fun responseMessage(message: String) {
+        ussdApi!!.send("1") { // it: response response
                 // second option list - select option 1
-                ussdApi.send("1",new USSDController.CallbackMessage(){
-                    override fun responseMessage(message: String) {
+                ussdApi.send("1") { // it: response message
                         ...
-                    }
-                })
-            }
-        })
+                }
+        }
     }
 
     override fun over(message: String) {

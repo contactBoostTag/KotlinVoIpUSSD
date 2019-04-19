@@ -29,9 +29,9 @@ class USSDService : AccessibilityService() {
         this.event = event
 
         Log.d(TAG, "onAccessibilityEvent")
-//        Log.d(TAG, "onAccessibilityEvent: [type] ${event.eventType} [class] ${event.className}" +
-//                " [package] ${event.packageName} [time]" +
-//                " ${event.eventTime} [text] ${event.text}")
+        Log.d(TAG, "onAccessibilityEvent: [type] ${event?.eventType} [class] ${event?.className}" +
+                " [package] ${event?.packageName} [time]" +
+                " ${event?.eventTime} [text] ${event?.text}")
 
         if (USSDController.instance == null || !USSDController.instance!!.isRunning!!) {
             return
@@ -63,7 +63,7 @@ class USSDService : AccessibilityService() {
                 if (USSDController.instance!!.callbackMessage == null)
                     USSDController.instance!!.callbackInvoke.responseInvoke(response)
                 else {
-                    USSDController.instance!!.callbackMessage?.responseMessage(response)
+                    USSDController.instance!!.callbackMessage.invoke(response)
                     USSDController.instance!!.callbackMessage.let { null }
                 }
             }
@@ -198,8 +198,8 @@ class USSDService : AccessibilityService() {
                 leaves.add(node)
                 return
             }
-            for (i in 0..node.childCount) {
-                getLeaves(leaves, node.getChild(i))
+            (0..node.childCount).forEach {
+                getLeaves(leaves, node.getChild(it))
             }
         }
     }
