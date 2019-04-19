@@ -1,5 +1,9 @@
 # Changelog
 
+## Release Kotlin USSD Library 1.1.i (19/04/2019)
+- Kotlin support (kotlin-ussd-librrary)
+---
+
 ## Release USSD Library 1.1.i Interface for usage (06/03/2019)
 - Overlay permissions moves into library and have static methods
 ---
