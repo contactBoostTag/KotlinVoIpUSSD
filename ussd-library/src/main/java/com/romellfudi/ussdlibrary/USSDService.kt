@@ -95,7 +95,7 @@ class USSDService : AccessibilityService() {
      * @param event AccessibilityEvent
      * @return boolean USSD Widget has problem message
      */
-    protected fun problemView(event: AccessibilityEvent): Boolean {
+    private fun problemView(event: AccessibilityEvent): Boolean {
         return isUSSDWidget(event) && USSDController.instance!!.map!![USSDController.KEY_ERROR]!!
                 .contains(event.text[0].toString())
     }
@@ -125,7 +125,7 @@ class USSDService : AccessibilityService() {
          * Send whatever you want via USSD
          * @param text any string
          */
-        fun send(text: String) {
+        internal fun send(text: String) {
             setTextIntoField(event, text)
             clickOnButton(event, 1)
         }
@@ -159,7 +159,7 @@ class USSDService : AccessibilityService() {
          * @param event AccessibilityEvent
          * @return boolean has or not input text
          */
-        fun notInputText(event: AccessibilityEvent): Boolean {
+        internal fun notInputText(event: AccessibilityEvent): Boolean {
             var flag = true
             for (leaf in getLeaves(event)) {
                 if (leaf.className == "android.widget.EditText") flag = false
@@ -172,7 +172,7 @@ class USSDService : AccessibilityService() {
          * @param event AccessibilityEvent
          * @param index button's index
          */
-        protected fun clickOnButton(event: AccessibilityEvent?, index: Int) {
+        private fun clickOnButton(event: AccessibilityEvent?, index: Int) {
             var count = -1
             for (leaf in getLeaves(event!!)) {
                 if (leaf.className.toString().toLowerCase().contains("button")) {
@@ -189,7 +189,6 @@ class USSDService : AccessibilityService() {
             if (event.source != null) {
                 getLeaves(leaves, event.source)
             }
-
             return leaves
         }
 
