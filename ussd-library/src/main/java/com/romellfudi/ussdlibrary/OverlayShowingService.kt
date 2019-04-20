@@ -17,8 +17,8 @@ import android.widget.Button
  * OverlayShowingService for Android progressing dialog
  *
  * @author Romell Dominguez
- * @version 1.0.a 23/02/2017
- * @since 1.0
+ * @version 1.1.i 2019/04/18
+ * @since 1.1.i
  */
 class OverlayShowingService : Service() {
 

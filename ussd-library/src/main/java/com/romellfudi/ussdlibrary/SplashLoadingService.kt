@@ -20,8 +20,8 @@ import android.widget.RelativeLayout
  * SplashLoadingService for Android splashing dialog
  *
  * @author Romell Dominguez
- * @version 1.1.d 23/02/2017
- * @since 1.1.d
+ * @version 1.1.i 2019/04/18
+ * @since 1.1.i
  */
 class SplashLoadingService : Service() {
 

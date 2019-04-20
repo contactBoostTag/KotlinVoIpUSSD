@@ -14,8 +14,8 @@ import java.util.*
  * AccessibilityService for ussd windows on Android mobile Telcom
  *
  * @author Romell Dominguez
- * @version 1.1.c 27/09/2018
- * @since 1.0.a
+ * @version 1.1.i 2019/04/18
+ * @since 1.1.i
  */
 class USSDService : AccessibilityService() {
 
@@ -63,7 +63,7 @@ class USSDService : AccessibilityService() {
                 if (USSDController.instance!!.callbackMessage == null)
                     USSDController.instance!!.callbackInvoke.responseInvoke(response)
                 else {
-                    USSDController.instance!!.callbackMessage.invoke(response)
+                    USSDController.instance!!.callbackMessage(response)
                     USSDController.instance!!.callbackMessage.let { null }
                 }
             }

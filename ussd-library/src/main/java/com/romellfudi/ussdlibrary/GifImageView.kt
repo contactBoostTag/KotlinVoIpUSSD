@@ -12,6 +12,13 @@ import android.view.View
 import java.io.FileNotFoundException
 import java.io.InputStream
 
+/**
+ * Designed view Android splashing dialog
+ *
+ * @author Romell Dominguez
+ * @version 1.1.i 2019/04/18
+ * @since 1.1.i
+ */
 class GifImageView : View {
 
     private var mInputStream: InputStream? = null
@@ -25,7 +32,7 @@ class GifImageView : View {
         this.mContext = context
     }
 
-//    @JvmOverloads
+    //    @JvmOverloads
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int = 0) : super(context, attrs, defStyleAttr) {
         this.mContext = context
         if (attrs.getAttributeName(1) == "background") {

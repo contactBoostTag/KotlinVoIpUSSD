@@ -1,13 +1,12 @@
 package com.romellfudi.ussdlibrary
 
-import java.util.HashMap
-import java.util.HashSet
+import java.util.*
 
 /**
  *
  * @author Romell Dominguez
- * @version 1.1.c 13/02/2018
- * @since 1.0.a
+ * @version 1.1.i 2019/04/18
+ * @since 1.1.i
  */
 interface USSDApi {
     fun send(text: String, callbackMessage: (String) -> Unit)

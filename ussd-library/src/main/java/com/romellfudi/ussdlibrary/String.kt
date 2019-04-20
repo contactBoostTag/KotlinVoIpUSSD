@@ -1,9 +1,11 @@
 package com.romellfudi.ussdlibrary
 
 /**
- * @autor Romell Domínguez
- * @date 2019-04-17
- * @version 1.0
+ * Kotlin library extensions
+ *
+ * @author Romell Dominguez
+ * @version 1.1.i 2019/04/18
+ * @since 1.1.i
  */
 inline fun CharSequence.isEmpty(): Boolean = length == 0
 fun String.replace(oldChar: String, newChar: String): String {
