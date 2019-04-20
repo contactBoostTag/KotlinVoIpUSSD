@@ -19,15 +19,11 @@ import java.util.*
  */
 class USSDService : AccessibilityService() {
 
-    var event: AccessibilityEvent? = null
-
     /**
      * Catch widget by Accessibility, when is showing at mobile display
      * @param event AccessibilityEvent
      */
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
-        this.event = event
-
         Log.d(TAG, "onAccessibilityEvent")
         Log.d(TAG, "onAccessibilityEvent: [type] ${event?.eventType} [class] ${event?.className}" +
                 " [package] ${event?.packageName} [time]" +
