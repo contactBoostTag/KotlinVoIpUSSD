@@ -2,16 +2,9 @@ package com.romellfudi.ussd.sample
 
 import android.Manifest.permission
 import android.annotation.SuppressLint
-import android.content.Context.TELEPHONY_SERVICE
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
-import android.telephony.TelephonyManager
-import android.telephony.TelephonyManager.*
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -40,6 +33,7 @@ import java.util.HashSet
  * @version 1.1.b 27/09/2018
  * @since 1.0.a
  */
+
 class MainFragment : Fragment() {
 
     private var result: TextView? = null
@@ -76,27 +70,6 @@ class MainFragment : Fragment() {
         PermissionService(activity).request(
                 arrayOf(permission.CALL_PHONE, permission.READ_PHONE_STATE),
                 callback)
-
-
-//        val telephonyManager =(activity as MainActivity)?.getSystemService(TELEPHONY_SERVICE) as TelephonyManager
-//        val handler = Handler()
-//
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            Log.d("APP", "onReceiveUssdResponse")
-//            telephonyManager.sendUssdRequest("*515#",
-//                    object : UssdResponseCallback() {
-//                        override fun onReceiveUssdResponse(telephonyManager: TelephonyManager?, request: String?, response: CharSequence?) {
-//                            Log.d("APP", "onReceiveUssdResponse-request-${request}")
-//                            Log.d("APP", "onReceiveUssdResponse-response-${response}")
-//                            super.onReceiveUssdResponse(telephonyManager, request, response)
-//                        }
-//
-//                        override fun onReceiveUssdResponseFailed(telephonyManager: TelephonyManager?, request: String?, failureCode: Int) {
-//                            Log.d("APP", "onReceiveUssdResponseFailed-${request}")
-//                            super.onReceiveUssdResponseFailed(telephonyManager, request, failureCode)
-//                        }
-//            },handler)
-//        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -118,19 +91,15 @@ class MainFragment : Fragment() {
                     Log.d("APP", message)
                     result!!.append("\n-\n$message")
                     // first option list - select option 1
-                    ussdApi!!.send("1", object : USSDController.CallbackMessage {
-                        override fun responseMessage(message: String) {
-                            Log.d("APP", message)
-                            result!!.append("\n-\n$message")
+                    ussdApi!!.send("1") {
+                            Log.d("APP", it)
+                            result!!.append("\n-\n$it")
                             // second option list - select option 1
-                            ussdApi!!.send("1", object : USSDController.CallbackMessage {
-                                override fun responseMessage(message: String) {
-                                    Log.d("APP", message)
-                                    result!!.append("\n-\n$message")
-                                }
-                            })
-                        }
-                    })
+                            ussdApi!!.send("1") {
+                                Log.d("APP", it)
+                                result!!.append("\n-\n$it")
+                            }
+                    }
                 }
 
                 override fun over(message: String) {
@@ -140,7 +109,7 @@ class MainFragment : Fragment() {
             })
         }
 
-        btn2!!.setOnClickListener {
+        btn2!!.setOnClickListener(fun(_: View) {
             if (USSDController.verifyOverLay(activity!!)) {
                 val svc = Intent(activity, OverlayShowingService::class.java)
                 svc.putExtra(OverlayShowingService.EXTRA, "PROCESANDO")
@@ -154,22 +123,14 @@ class MainFragment : Fragment() {
                         Log.d("APP", message)
                         result!!.append("\n-\n$message")
                         // first option list - select option 1
-                        ussdApi!!.send("1", object : USSDController.CallbackMessage {
-                            override fun responseMessage(message: String) {
-                                Log.d("APP", message)
-                                result!!.append("\n-\n$message")
-                                // second option list - select option 1
-                                ussdApi!!.send("1", object : USSDController.CallbackMessage {
-                                    override fun responseMessage(message: String) {
-                                        Log.d("APP", message)
-                                        result!!.append("\n-\n$message")
-                                        activity!!.stopService(svc)
-                                        Log.d("APP", "STOP OVERLAY DIALOG")
-                                        Log.d("APP", "successful")
-                                    }
-                                })
+                        ussdApi!!.send("1") {
+                            Log.d("APP", it)
+                            result!!.append("\n-\n$it")
+                            // second option list - select option 1
+                            ussdApi!!.send("1") {
+                                Log.d("APP", it)
                             }
-                        })
+                        }
                     }
 
                     override fun over(message: String) {
@@ -180,7 +141,7 @@ class MainFragment : Fragment() {
                     }
                 })
             }
-        }
+        })
 
         btn4!!.setOnClickListener {
             if (USSDController.verifyOverLay(activity!!)) {
@@ -194,21 +155,17 @@ class MainFragment : Fragment() {
                         Log.d("APP", message)
                         result!!.append("\n-\n$message")
                         // first option list - select option 1
-                        ussdApi!!.send("1", object : USSDController.CallbackMessage {
-                            override fun responseMessage(message: String) {
+                        ussdApi!!.send("1", fun(message) {
                                 Log.d("APP", message)
                                 result!!.append("\n-\n$message")
                                 // second option list - select option 1
-                                ussdApi!!.send("1", object : USSDController.CallbackMessage {
-                                    override fun responseMessage(message: String) {
-                                        Log.d("APP", message)
-                                        result!!.append("\n-\n$message")
+                                ussdApi!!.send("1") {
+                                        Log.d("APP", it)
+                                        result!!.append("\n-\n$it")
                                         activity!!.stopService(svc)
                                         Log.d("APP", "STOP SPLASH DIALOG")
                                         Log.d("APP", "successful")
-                                    }
-                                })
-                            }
+                                }
                         })
                     }
 
@@ -228,8 +185,6 @@ class MainFragment : Fragment() {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         callback.handler(permissions, grantResults)
     }
 }
-

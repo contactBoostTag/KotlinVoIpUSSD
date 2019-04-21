@@ -14,24 +14,20 @@ import java.util.*
  * AccessibilityService for ussd windows on Android mobile Telcom
  *
  * @author Romell Dominguez
- * @version 1.1.c 27/09/2018
- * @since 1.0.a
+ * @version 1.1.i 2019/04/18
+ * @since 1.1.i
  */
 class USSDService : AccessibilityService() {
-
-    var event: AccessibilityEvent? = null
 
     /**
      * Catch widget by Accessibility, when is showing at mobile display
      * @param event AccessibilityEvent
      */
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
-        this.event = event
-
         Log.d(TAG, "onAccessibilityEvent")
-//        Log.d(TAG, "onAccessibilityEvent: [type] ${event.eventType} [class] ${event.className}" +
-//                " [package] ${event.packageName} [time]" +
-//                " ${event.eventTime} [text] ${event.text}")
+        Log.d(TAG, "onAccessibilityEvent: [type] ${event?.eventType} [class] ${event?.className}" +
+                " [package] ${event?.packageName} [time]" +
+                " ${event?.eventTime} [text] ${event?.text}")
 
         if (USSDController.instance == null || !USSDController.instance!!.isRunning!!) {
             return
@@ -63,7 +59,7 @@ class USSDService : AccessibilityService() {
                 if (USSDController.instance!!.callbackMessage == null)
                     USSDController.instance!!.callbackInvoke.responseInvoke(response)
                 else {
-                    USSDController.instance!!.callbackMessage?.responseMessage(response)
+                    USSDController.instance!!.callbackMessage(response)
                     USSDController.instance!!.callbackMessage.let { null }
                 }
             }
@@ -95,7 +91,7 @@ class USSDService : AccessibilityService() {
      * @param event AccessibilityEvent
      * @return boolean USSD Widget has problem message
      */
-    protected fun problemView(event: AccessibilityEvent): Boolean {
+    private fun problemView(event: AccessibilityEvent): Boolean {
         return isUSSDWidget(event) && USSDController.instance!!.map!![USSDController.KEY_ERROR]!!
                 .contains(event.text[0].toString())
     }
@@ -125,7 +121,7 @@ class USSDService : AccessibilityService() {
          * Send whatever you want via USSD
          * @param text any string
          */
-        fun send(text: String) {
+        internal fun send(text: String) {
             setTextIntoField(event, text)
             clickOnButton(event, 1)
         }
@@ -159,7 +155,7 @@ class USSDService : AccessibilityService() {
          * @param event AccessibilityEvent
          * @return boolean has or not input text
          */
-        fun notInputText(event: AccessibilityEvent): Boolean {
+        internal fun notInputText(event: AccessibilityEvent): Boolean {
             var flag = true
             for (leaf in getLeaves(event)) {
                 if (leaf.className == "android.widget.EditText") flag = false
@@ -172,7 +168,7 @@ class USSDService : AccessibilityService() {
          * @param event AccessibilityEvent
          * @param index button's index
          */
-        protected fun clickOnButton(event: AccessibilityEvent?, index: Int) {
+        private fun clickOnButton(event: AccessibilityEvent?, index: Int) {
             var count = -1
             for (leaf in getLeaves(event!!)) {
                 if (leaf.className.toString().toLowerCase().contains("button")) {
@@ -189,7 +185,6 @@ class USSDService : AccessibilityService() {
             if (event.source != null) {
                 getLeaves(leaves, event.source)
             }
-
             return leaves
         }
 
@@ -198,8 +193,8 @@ class USSDService : AccessibilityService() {
                 leaves.add(node)
                 return
             }
-            for (i in 0..node.childCount) {
-                getLeaves(leaves, node.getChild(i))
+            (0..node.childCount).forEach {
+                getLeaves(leaves, node.getChild(it))
             }
         }
     }

@@ -16,8 +16,8 @@ import java.util.*
 
 /**
  * @author Romell Dominguez
- * @version 1.1.c 27/09/2018
- * @since 1.0.a
+ * @version 1.1.i 2019/04/18
+ * @since 1.1.i
  */
 class USSDController private constructor(var context: Context) : USSDInterface, USSDApi {
 
@@ -25,7 +25,7 @@ class USSDController private constructor(var context: Context) : USSDInterface, 
 
     lateinit var callbackInvoke: CallbackInvoke
 
-    lateinit var callbackMessage: CallbackMessage
+    lateinit var callbackMessage: (String) -> Unit
 
     var isRunning: Boolean? = false
 
@@ -97,6 +97,14 @@ class USSDController private constructor(var context: Context) : USSDInterface, 
         }
     }
 
+    /**
+     * Invoke a dial-up calling a ussd number and
+     * you had a overlay progress widget
+     *
+     * @param ussdPhoneNumber ussd number
+     * @param simSlot         simSlot number to use
+     *
+     */
     private fun dialUp(ussdPhoneNumber: String, simSlot: Int) {
         var ussdPhoneNumber = ussdPhoneNumber
         if (map == null || !map!!.containsKey(KEY_ERROR) || !map!!.containsKey(KEY_LOGIN)) {
@@ -151,23 +159,28 @@ class USSDController private constructor(var context: Context) : USSDInterface, 
         USSDService.send(text)
     }
 
-    override fun send(text: String, callbackMessage: CallbackMessage) {
+    override fun send(text: String, callbackMessage: (String) -> Unit) {
         this.callbackMessage = callbackMessage
         ussdInterface?.sendData(text)
     }
 
+    /**
+     * Invoke class to comunicate messages between USSD and App
+     */
     interface CallbackInvoke {
         fun responseInvoke(message: String)
 
         fun over(message: String)
     }
 
+    // Unit Kotlin instead of Interface with just one message
     interface CallbackMessage {
         fun responseMessage(message: String)
     }
 
     companion object {
 
+        // singleton reference
         var instance: USSDController? = null
 
         val KEY_LOGIN = "KEY_LOGIN"
@@ -201,9 +214,9 @@ class USSDController private constructor(var context: Context) : USSDInterface, 
         }
 
         fun verifyOverLay(context: Context): Boolean {
-            val m_android_doesnt_grant = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+            val notGrant = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                     && !Settings.canDrawOverlays(context)
-            if (m_android_doesnt_grant) {
+            return if (notGrant) {
                 if (context is Activity) {
                     openSettingsOverlay(context)
                 } else {
@@ -211,20 +224,15 @@ class USSDController private constructor(var context: Context) : USSDInterface, 
                             "Overlay permission have not grant permission.",
                             Toast.LENGTH_LONG).show()
                 }
-                return false
+                false
             } else
-                return true
+                true
         }
 
         private fun openSettingsAccessibility(activity: Activity) {
             val alertDialogBuilder = AlertDialog.Builder(activity)
             alertDialogBuilder.setTitle("USSD Accessibility permission")
-            val applicationInfo = activity.applicationInfo
-            val stringId = applicationInfo.labelRes
-            val name = if (applicationInfo.labelRes == 0)
-                applicationInfo.nonLocalizedLabel.toString()
-            else
-                activity.getString(stringId)
+            val name = getNameApp(activity)
             alertDialogBuilder
                     .setMessage("You must enable accessibility permissions for the app '$name'")
             alertDialogBuilder.setCancelable(true)
@@ -236,12 +244,7 @@ class USSDController private constructor(var context: Context) : USSDInterface, 
         private fun openSettingsOverlay(activity: Activity) {
             val alertDialogBuilder = AlertDialog.Builder(activity)
             alertDialogBuilder.setTitle("USSD Overlay permission")
-            val applicationInfo = activity.applicationInfo
-            val stringId = applicationInfo.labelRes
-            val name = if (applicationInfo.labelRes == 0)
-                applicationInfo.nonLocalizedLabel.toString()
-            else
-                activity.getString(stringId)
+            val name = getNameApp(activity)
             alertDialogBuilder
                     .setMessage("You must allow for the app to appear '$name' on top of other apps.")
             alertDialogBuilder.setCancelable(true)
@@ -252,6 +255,15 @@ class USSDController private constructor(var context: Context) : USSDInterface, 
             }
             val alertDialog = alertDialogBuilder.create()
             alertDialog?.show()
+        }
+
+        private fun getNameApp(activity: Activity): String{
+            val applicationInfo = activity.applicationInfo
+            val stringId = applicationInfo.labelRes
+            return if (applicationInfo.labelRes == 0)
+                applicationInfo.nonLocalizedLabel.toString()
+            else
+                activity.getString(stringId)
         }
 
 
@@ -287,7 +299,7 @@ class USSDController private constructor(var context: Context) : USSDInterface, 
                     splitter.setString(settingValue)
                     while (splitter.hasNext()) {
                         val accessabilityService = splitter.next()
-                        if (accessabilityService.equals(service)) {
+                        if (accessabilityService == service) {
                             return true
                         }
                     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">VOIP USSD Sample</string>
+    <string name="app_name">Kotlin VOIP USSD Sample</string>
     <string name="title_activity_menu">MenuActivity</string>
     <string name="title_activity_cp1">Test</string>
     <string name="action_config1">Test Config</string>

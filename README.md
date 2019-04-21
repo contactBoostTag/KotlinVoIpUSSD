@@ -88,13 +88,11 @@ USSDApi ussdApi = USSDController.getInstance(activity!!)
 ussdApi.callUSSDOverlayInvoke(phoneNumber, map!!, object : USSDController.CallbackInvoke {
     override fun responseInvoke(message: String) {
         // message has the response string data
-        String dataToSend = "data"// <- send "data" into USSD's input text
-        ussdApi!!.send("1", object : USSDController.CallbackMessage {
-            override fun responseMessage(message: String) {
+        var dataToSend = "data"// <- send "data" into USSD's input text
+        ussdApi!!.send("1") { // it: response String
                 // message has the response string data from USSD
-            }
-        })
-    }
+        }
+     }
 
     override fun over(message: String) {
         // message has the response string data from USSD or error
@@ -109,16 +107,12 @@ if you need work with your custom messages, use this structure:
 ussdApi.callUSSDOverlayInvoke(phoneNumber, map!!, object : USSDController.CallbackInvoke {
     override fun responseInvoke(message: String) {
         // first option list - select option 1
-        ussdApi!!.send("1", object : USSDController.CallbackMessage {
-            override fun responseMessage(message: String) {
+        ussdApi!!.send("1") { // it: response response
                 // second option list - select option 1
-                ussdApi.send("1",new USSDController.CallbackMessage(){
-                    override fun responseMessage(message: String) {
+                ussdApi.send("1") { // it: response message
                         ...
-                    }
-                })
-            }
-        })
+                }
+        }
     }
 
     override fun over(message: String) {

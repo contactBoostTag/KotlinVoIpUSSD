@@ -25,7 +25,8 @@ import java.util.*
 /**
  * @version 1.0
  * @autor Romell Domínguez
- * @date 18/4/19
+ * @version 1.1.i 2019/04/18
+ * @since 1.1.i
  */
 @PrepareForTest(Uri::class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -47,7 +48,7 @@ class USSDApiTestKotlin {
     lateinit var callbackInvoke: USSDController.CallbackInvoke
 
     @MockK
-    lateinit var callbackMessage: USSDController.CallbackMessage
+    lateinit var callbackMessage: (String) -> Unit
 
     @MockK
     lateinit var uri: Uri
@@ -55,7 +56,7 @@ class USSDApiTestKotlin {
     @MockK
     lateinit var accessibilityEvent: AccessibilityEvent
 
-    val stringArgumentCaptor = slot<String>()
+    val stringSlot = slot<String>()
 
     @Mock
     internal val ussdInterface: USSDInterface = mock()
@@ -81,7 +82,13 @@ class USSDApiTestKotlin {
                 .thenAnswer {
                     load(texts)
                 }
+        eventDummy()
+    }
 
+    private fun eventDummy() {
+        every { accessibilityEvent.eventType } returns 0
+        every { accessibilityEvent.packageName } returns "ussd.test"
+        every { accessibilityEvent.eventTime } returns 1L
     }
 
     private fun load(texts: ArrayList<CharSequence>) {
@@ -109,13 +116,13 @@ class USSDApiTestKotlin {
         var MESSAGE = "waiting"
         every { accessibilityEvent.source } returns null
         ussdController.callUSSDInvoke("*1#", map, callbackInvoke!!)
-        verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE)))
+        verify { callbackInvoke.over(capture(stringSlot)) }
+        assertThat(stringSlot.captured, `is`(equalTo(MESSAGE)))
 
         MESSAGE = "problem UUID"
         ussdController.callUSSDInvoke("*1#", map, callbackInvoke!!)
-        verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE)))
+        verify { callbackInvoke.over(capture(stringSlot)) }
+        assertThat(stringSlot.captured, `is`(equalTo(MESSAGE)))
     }
 
     @Test
@@ -127,8 +134,8 @@ class USSDApiTestKotlin {
         every { USSDService.notInputText(any()) } returns true
         every { accessibilityEvent.source } returns null
         ussdController.callUSSDInvoke("*1#", map, callbackInvoke)
-        verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE)))
+        verify { callbackInvoke.over(capture(stringSlot)) }
+        assertThat(stringSlot.captured, `is`(equalTo(MESSAGE)))
     }
 
     @Test
@@ -142,36 +149,36 @@ class USSDApiTestKotlin {
         multipleMessages(MESSAGE, map)
     }
 
-    private fun multipleMessages(MESSAGE: String, map: HashMap<String, HashSet<String>>) {
-        var MESSAGE1 = MESSAGE
-        verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE1)))
+    private fun multipleMessages(msg: String, map: HashMap<String, HashSet<String>>) {
+        var message = msg
+        verify { callbackInvoke.over(capture(stringSlot)) }
+        assertThat(stringSlot.captured, `is`(equalTo(message)))
 
-        MESSAGE1 = "message"
+        message = "message"
         every { accessibilityEvent.source } returns null
         ussdController.ussdInterface = ussdInterface
 
         ussdController.send("1", callbackMessage!!)
-        verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE1)))
+        verify { callbackInvoke.over(capture(stringSlot)) }
+        assertThat(stringSlot.captured, `is`(equalTo(message)))
 
         ussdController.send("1", callbackMessage!!)
-        verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE1)))
+        verify { callbackInvoke.over(capture(stringSlot)) }
+        assertThat(stringSlot.captured, `is`(equalTo(message)))
 
         ussdController.send("1", callbackMessage!!)
-        verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE1)))
+        verify { callbackInvoke.over(capture(stringSlot)) }
+        assertThat(stringSlot.captured, `is`(equalTo(message)))
 
         ussdController.send("1", callbackMessage!!)
-        verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE1)))
+        verify { callbackInvoke.over(capture(stringSlot)) }
+        assertThat(stringSlot.captured, `is`(equalTo(message)))
 
-        MESSAGE1 = "Final Close dialog"
+        message = "Final Close dialog"
         every { USSDService.notInputText(any()) } returns true
         ussdController.callUSSDInvoke("*1#", map, callbackInvoke!!)
-        verify { callbackInvoke.over(capture(stringArgumentCaptor)) }
-        assertThat(stringArgumentCaptor.captured, `is`(equalTo(MESSAGE1)))
+        verify { callbackInvoke.over(capture(stringSlot)) }
+        assertThat(stringSlot.captured, `is`(equalTo(message)))
     }
 
     @Test
@@ -191,8 +198,6 @@ class USSDApiTestKotlin {
         map["KEY_LOGIN"] = HashSet(Arrays.asList("espere", "waiting", "loading", "esperando"))
         map["KEY_ERROR"] = HashSet(Arrays.asList("problema", "problem", "error", "null"))
         mockkObject(USSDController)
-        mockkObject(USSDController)
-        mockkObject(USSDService)
         mockkObject(USSDService)
         mockkStatic(Uri::class)
 
