@@ -3,6 +3,7 @@
 [![Platform](https://img.shields.io/badge/platform-android-brightgreen.svg)](https://developer.android.com/index.html)
 [![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=23)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/romellfudi/KotlinVoIpUSSD/blob/master/LICENSE)
+[![Gitter](https://badges.gitter.im/KotlinVoIpUSSD/community.svg)](https://gitter.im/KotlinVoIpUSSD/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Bintray](https://img.shields.io/bintray/v/romllz489/maven/kotlin-ussd-library.svg)](https://bintray.com/romllz489/maven/kotlin-ussd-library)
 [![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-Kotlin%20Void%20USSD%20Library-green.svg?style=flat )]( https://android-arsenal.com/details/1/7628 )
 [![Jitpack](https://jitpack.io/v/romellfudi/KotlinVoIpUSSD.svg)](https://jitpack.io/#romellfudi/KotlinVoIpUSSD)
