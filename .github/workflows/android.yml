@@ -1,0 +1,44 @@
+name: Android CI
+
+on:
+  push:
+    branches:
+      - "master"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: Build App with Gradle
+      run: ./gradlew assembleDebug
+    - name: Testing ussd-library
+      run: ./gradlew assembleDebug lint testDebugUnitTest -p ussd-library
+    - name: Upload Testing ussd-library
+      uses: actions/upload-artifact@v1
+      with:
+        name: ussd-library-test
+        path: ussd-library/build/reports/tests/testDebugUnitTest
+    - name: Upload ussd-library artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: ussd-library-aar
+        path: ussd-library/build/outputs/aar/ussd-library-debug.aar
+    - name: Rename aar kotlin
+      run: mv fudi-store-kotlin/build/outputs/aar/ussd-library-debug.aar ussd-library.aar
+    - name: Upload Assets
+      uses: meeDamian/github-release@2.0
+      with:
+        allow_override: true
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag: latest
+        name: Latest Relese
+        body: >
+          This release actually.  
+        files: >
+          ussd-library.aar 
