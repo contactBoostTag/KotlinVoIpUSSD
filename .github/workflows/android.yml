@@ -30,7 +30,7 @@ jobs:
         name: ussd-library-aar
         path: ussd-library/build/outputs/aar/ussd-library-debug.aar
     - name: Rename aar kotlin
-      run: mv fudi-store-kotlin/build/outputs/aar/ussd-library-debug.aar ussd-library.aar
+      run: mv fussd-library/build/outputs/aar/ussd-library-debug.aar ussd-library.aar
     - name: Upload Assets
       uses: meeDamian/github-release@2.0
       with:
